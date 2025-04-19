@@ -1,0 +1,80 @@
+# import the necessary modules
+import scipy.stats as st
+import numpy as np
+
+# Get user defined mean and standard deviation
+mean_def = int(input("Defined mean: "))
+sd_def = int(input("Defined std dev: "))
+
+np.random.seed(seed=123)
+
+# Generate 100 random numbers with a normal distribution with a mean of mean_def and a standard deviation of sd_def
+r = st.norm.rvs(mean_def, sd_def, size=100)
+
+mean = np.mean(r)# Calculate the sample mean of r
+print(f'Sample mean is {mean:.2f}')
+
+# Calculate the standard error of r
+std_dev = np.std(r, ddof=1)# Calculate standard deviation of r
+stderr = std_dev / np.sqrt(len(r))# Calculate standard error
+
+int1 = (mean - 1.96 * stderr, mean + 1.96 * stderr)# Calculate the 95% confidence interval using the sample mean and standard error
+print(f'({int1[0]:.2f}, {int1[1]:.2f})')
+
+# Determine if the user defined mean falls within the 95% confidence interval
+if int1[0] <= mean_def <= int1[1]:# Finish the if statement
+    print("User defined mean,", mean_def,", is within the 95% confidence interval")
+else:
+   print("User defined mean,", mean_def,", is not within the 95% confidence interval")
+
+
+#or:
+
+"""
+import pandas as pd
+import scipy.stats as st
+import math
+
+# Load sample data from CSV
+file_path = input("Enter the path to the CSV file: ")
+data = pd.read_csv(file_path, header=None)
+sample = data[0]
+
+# Get basic sample stats
+n = len(sample)
+sam_mean = sample.mean()
+sam_sd = sample.std(ddof=1)  # sample standard deviation
+
+# Ask user for population info
+pop_mean = float(input("Enter the population mean to check: "))
+has_pop_sd = input("Do you know the population standard deviation? (y/n): ").lower()
+
+if has_pop_sd == 'y':
+    pop_sd = float(input("Enter the population standard deviation: "))
+    dist_type = "z"
+else:
+    dist_type = "t"
+
+conf_level = float(input("Enter confidence level (e.g., 0.95 for 95%): "))
+
+# Calculate the confidence interval
+if dist_type == "z":
+    z_crit = st.norm.ppf((1 + conf_level) / 2)
+    margin_error = z_crit * (pop_sd / math.sqrt(n))
+else:
+    df = n - 1
+    t_crit = st.t.ppf((1 + conf_level) / 2, df)
+    margin_error = t_crit * (sam_sd / math.sqrt(n))
+
+lower_bound = sam_mean - margin_error
+upper_bound = sam_mean + margin_error
+
+# Check if population mean is within the interval
+in_interval = lower_bound <= pop_mean <= upper_bound
+
+# Output
+print(f"\n{int(conf_level * 100)}% confidence interval for the population mean: ({lower_bound:.4f}, {upper_bound:.4f})")
+print(f"Sample mean: {sam_mean:.4f}, Sample size: {n}")
+print(f"The population mean {pop_mean} is {'within' if in_interval else 'NOT within'} the confidence interval.")
+
+"""

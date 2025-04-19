@@ -1,0 +1,19 @@
+# Load the necessary module
+from scipy.stats import binom
+
+# Get user-defined number of successes
+k = int(input("num successes: ")) # how many successes do you want?
+
+# Set the number of trials and the probability of success in each trial
+n = 100 # number of trials
+p = 0.5 # probability of success
+
+
+P = binom.pmf(k, n, p)# Calculate the probability of k successes given the defined n and p
+print(f'{P:.6E}')
+
+mean  = n*p# Return the mean of the distribution
+#print(f'{mean:.2f}')
+
+var = n * p * (1 -p)# Return the variance of the distribution 
+#print(f'{var:.2f}')

@@ -1,0 +1,45 @@
+# Import necessary modules
+import pandas as pd
+import math
+import scipy.stats as st
+
+# Input age
+age = int(input("Enter an age: "))
+
+# Read csv file titanic.csv into data frame
+titanic = pd.read_csv("csvforstats(Sheet1).csv")
+
+# Take the subset of the data where Embarked = "S"
+south = titanic[titanic["Embarked"] == "S"]
+
+# Find total number in subset
+n1 = len(south)
+
+# Find number in subset where Age > age
+x1 = south[south["Age"] > age].shape[0]
+
+# Calculate sample proportion
+p1 = x1 / n1
+print(f'Sample proportion is {p1:.6f}')
+
+# Calculate standard error
+stderr = math.sqrt(p1 * (1 - p1) / n1)
+
+# Find 95% confidence interval
+z_crit = st.norm.ppf(0.975)  # 95% confidence level
+margin_error = z_crit * stderr
+conf_int = (p1 - margin_error, p1 + margin_error)
+
+print(f'({conf_int[0]:.6f}, {conf_int[1]:.6f})')
+
+# Find proportion for full data
+titanic_clean = titanic.dropna(subset=["Age"])  # Remove rows with missing Age
+n2 = len(titanic_clean)
+x2 = titanic_clean[titanic_clean["Age"] > age].shape[0]
+p2 = x2 / n2
+
+# Determine if the actual proportion falls within the 95% confidence interval
+if conf_int[0] <= p2 <= conf_int[1]:
+    print(f'Actual proportion, {p2:.6f}, is within the 95% confidence interval')
+else:
+    print(f'Actual proportion, {p2:.6f}, is not within the 95% confidence interval')

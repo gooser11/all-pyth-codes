@@ -1,0 +1,10 @@
+import pandas as pd
+
+df = pd.read_csv("csvforstats(Sheet1).csv")
+
+internet = df[['age']]# look at specific collumn
+
+five_num = internet.describe()
+# find the five number summary
+
+print(five_num)

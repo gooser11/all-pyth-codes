@@ -1,0 +1,18 @@
+from scipy.stats import hypergeom
+
+# Inputs
+N = int(input("Enter total population size N: "))
+x = int(input("Enter number of successes in population x: "))
+n = int(input("Enter sample size n: "))
+k = int(input("Enter observed successes k: "))
+
+# Define hypergeometric distribution
+rv = hypergeom(N, x, n)
+
+# Probability of exactly k successes
+P = rv.pmf(k)
+print(f'{P:.6f}')
+
+# Cumulative probability of k or more successes
+cp = rv.sf(k - 1)  # sf(k-1) = 1 - cdf(k-1)
+print(f'{cp:.6f}')
