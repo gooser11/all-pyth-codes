@@ -1,0 +1,21 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Read the CSV file
+df = pd.read_csv("twitchdata-update.csv")
+
+# Extract the Average viewers column
+avgViewers = df[['Average viewers']]
+
+# Compute and print the five-number summary
+five_num = avgViewers.describe()
+print(five_num)
+
+# Create a histogram to show the distribution
+plt.figure(figsize=(8, 5))
+plt.hist(avgViewers['Average viewers'], bins=30, color='skyblue', edgecolor='black')
+plt.title("Histogram of Average Viewers")
+plt.xlabel("Average Viewers")
+plt.ylabel("Frequency")
+plt.tight_layout()
+plt.show()

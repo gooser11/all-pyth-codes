@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("twitchdata-update.csv")
+df = pd.read_csv("csvforstats(Sheet1).csv")
 
 internet = df[['age']]# look at specific collumn
 
