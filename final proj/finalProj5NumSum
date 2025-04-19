@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load data
-df = pd.read_csv("twitchdata-update.csv")
+df = pd.read_csv("./final proj/twitchdata-update.csv")
 
 # Convert boolean columns to numeric (1/0)
 df['Partnered'] = df['Partnered'].astype(int)
