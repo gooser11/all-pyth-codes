@@ -4,76 +4,66 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load the data
-df = pd.read_csv("twitchdata-update.csv")
-print("Data loaded successfully!")
+df = pd.read_csv("./final proj/twitchdata-update.csv")
+# print("Data loaded successfully!")
 
-# First, let's see the exact column names
-print("\nActual column names in the dataset:")
-print(df.columns.tolist())
-
-# Now use the EXACT column names from the output above
-# Here are the likely correct column names based on your error:
+# Store column names for use
 features = ['Stream time(minutes)', 'Peak viewers', 'Average viewers', 'Followers', 
             'Followers gained', 'Views gained', 'Partnered', 'Mature']
 label = 'Watch time(Minutes)'
 
-# Verify these columns exist
-missing_cols = [col for col in features + [label] if col not in df.columns]
-if missing_cols:
-    print(f"\nERROR: These columns don't exist: {missing_cols}")
-    print("Please use the exact column names printed above.")
-else:
-    # Create feature DataFrame (X) and label Series (y)
-    X = df[features]
-    y = df[label]
 
-    # Preprocessing
-    # Convert boolean columns to numeric (1/0)
-    X['Partnered'] = X['Partnered'].astype(int)
-    X['Mature'] = X['Mature'].astype(int)
+# Create feature DataFrame (X) and label Series (y)
+X = df[features]
+y = df[label]
 
-    # Drop rows with missing values (if any)
-    X = X.dropna()
-    y = y[X.index]  # Ensure label aligns with features
+# Preprocessing
+# Convert boolean columns to numeric (1/0)
+X['Partnered'] = X['Partnered'].astype(int)
+X['Mature'] = X['Mature'].astype(int)
 
-    # Dimensions of feature set
-    print("\nFeature Set Dimensions (Rows, Columns):")
-    print(X.shape)
+# Drop rows with missing values (if any)
+X = X.dropna()
+y = y[X.index]  # Ensure label aligns with features
 
-    # Label dimensions
-    print("\nLabel Dimensions (Rows):")
-    print(y.shape)
+# Dimensions of feature set
+print("\nFeature Set Dimensions (Rows, Columns):")
+print(X.shape)
 
-    # Descriptive statistics
-    print("\nDescriptive Statistics for Features:")
-    print(X.describe())
+# Label dimensions
+print("\nLabel Dimensions (Rows):")
+print(y.shape)
 
-    print("\nDescriptive Statistics for Label:")
-    print(y.describe())
+# Descriptive statistics
+print("\nDescriptive Statistics for Features:")
+print(X.describe())
 
-    # Visualize distributions
-    plt.figure(figsize=(15, 10))
-    for i, col in enumerate(X.columns):
-        plt.subplot(3, 3, i+1)
-        sns.histplot(X[col], kde=True)
-        plt.title(col)
-    plt.tight_layout()
-    plt.show()
+print("\nDescriptive Statistics for Label:")
+print(y.describe())
 
-    plt.figure(figsize=(8, 5))
-    sns.histplot(y, kde=True)
-    plt.title('Watch Time Distribution')
-    plt.show()
+# Visualize distributions
+plt.figure(figsize=(15, 10))
+for i, col in enumerate(X.columns):
+    plt.subplot(3, 3, i+1)
+    sns.histplot(X[col], kde=True)
+    plt.title(col)
+plt.tight_layout()
+plt.show()
 
-    # Calculate correlations with label
-    print("\nCorrelation with Label (Watch Time):")
-    label_correlations = X.corrwith(y)
-    print(label_correlations.sort_values(ascending=False))
+plt.figure(figsize=(8, 5))
+sns.histplot(y, kde=True)
+plt.title('Watch Time Distribution')
+plt.show()
 
-    # Calculate feature correlations with each other
-    print("\nFeature Correlation Matrix:")
-    feature_correlations = X.corr()
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(feature_correlations, annot=True, cmap='coolwarm', fmt=".2f")
-    plt.title("Feature Correlation Matrix")
-    plt.show()
+# Calculate correlations with label
+print("\nCorrelation with Label (Watch Time):")
+label_correlations = X.corrwith(y)
+print(label_correlations.sort_values(ascending=False))
+
+# Calculate feature correlations with each other
+print("\nFeature Correlation Matrix:")
+feature_correlations = X.corr()
+plt.figure(figsize=(10, 8))
+sns.heatmap(feature_correlations, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Feature Correlation Matrix")
+plt.show()
