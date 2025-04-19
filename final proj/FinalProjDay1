@@ -18,6 +18,8 @@ y = df[label]
 
 # Preprocessing
 # Convert boolean columns to numeric (1/0)
+# because otherwise stuff will not read??
+# idk, internet said this would fix it and it did
 X['Partnered'] = X['Partnered'].astype(int)
 X['Mature'] = X['Mature'].astype(int)
 
