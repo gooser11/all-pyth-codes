@@ -5,14 +5,18 @@ import matplotlib.pyplot as plt
 # Load data
 df = pd.read_csv("twitchdata-update.csv")
 
-# Descriptive stats
-print(df.describe())
+# Convert boolean columns to numeric (1/0)
+df['Partnered'] = df['Partnered'].astype(int)
+df['Mature'] = df['Mature'].astype(int)
 
-# Correlation matrix
-corr = df.corr()
-sns.heatmap(corr, annot=True)
-plt.show()
+# Drop non-numeric columns (Language is categorical, exclude for now)
+numeric_df = df.select_dtypes(include=['int64', 'float64'])
 
-# Distribution plots
-sns.histplot(df['Watch time (Minutes)'])
+# Compute correlation matrix
+corr = numeric_df.corr()
+
+# Plot heatmap
+plt.figure(figsize=(10, 8))
+sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Correlation Matrix (Numeric Variables)")
 plt.show()
