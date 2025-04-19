@@ -1,21 +1,18 @@
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Read the CSV file
+# Load data
 df = pd.read_csv("twitchdata-update.csv")
 
-# Extract the Average viewers column
-avgViewers = df[['Average viewers']]
+# Descriptive stats
+print(df.describe())
 
-# Compute and print the five-number summary
-five_num = avgViewers.describe()
-print(five_num)
+# Correlation matrix
+corr = df.corr()
+sns.heatmap(corr, annot=True)
+plt.show()
 
-# Create a histogram to show the distribution
-plt.figure(figsize=(8, 5))
-plt.hist(avgViewers['Average viewers'], bins=30, color='skyblue', edgecolor='black')
-plt.title("Histogram of Average Viewers")
-plt.xlabel("Average Viewers")
-plt.ylabel("Frequency")
-plt.tight_layout()
+# Distribution plots
+sns.histplot(df['Watch time (Minutes)'])
 plt.show()
