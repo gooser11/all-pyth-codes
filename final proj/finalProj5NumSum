@@ -12,7 +12,6 @@ features = ['Stream time(minutes)', 'Peak viewers', 'Average viewers', 'Follower
             'Followers gained', 'Views gained', 'Partnered', 'Mature']
 label = 'Watch time(Minutes)'
 
-
 # Create feature DataFrame (X) and label Series (y)
 X = df[features]
 y = df[label]
@@ -56,12 +55,10 @@ plt.title('Watch Time Distribution')
 plt.show()
 
 # Calculate correlations with label
-print("\nCorrelation with Label (Watch Time):")
 label_correlations = X.corrwith(y)
 print(label_correlations.sort_values(ascending=False))
 
 # Calculate feature correlations with each other
-print("\nFeature Correlation Matrix:")
 feature_correlations = X.corr()
 plt.figure(figsize=(10, 8))
 sns.heatmap(feature_correlations, annot=True, cmap='coolwarm', fmt=".2f")
