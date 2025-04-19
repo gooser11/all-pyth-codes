@@ -1,22 +1,67 @@
+# Load dataset into Pandas DataFrame
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Load data
-df = pd.read_csv("./final proj/twitchdata-update.csv")
+df = pd.read_csv("twitchdata-update.csv")
+print("Data loaded successfully!")
 
+# Choose feature columns and label
+features = ['Stream time (minutes)', 'Peak viewers', 'Average viewers', 'Followers', 
+            'Followers gained', 'Views gained', 'Partnered', 'Mature']
+label = 'Watch time (Minutes)'
+
+# Create feature DataFrame (X) and label Series (y)
+X = df[features]
+y = df[label]
+
+# Preprocessing
 # Convert boolean columns to numeric (1/0)
-df['Partnered'] = df['Partnered'].astype(int)
-df['Mature'] = df['Mature'].astype(int)
+X['Partnered'] = X['Partnered'].astype(int)
+X['Mature'] = X['Mature'].astype(int)
 
-# Drop non-numeric columns (Language is categorical, exclude for now)
-numeric_df = df.select_dtypes(include=['int64', 'float64'])
+# Drop rows with missing values (if any)
+X = X.dropna()
+y = y[X.index]  # Ensure label aligns with features
 
-# Compute correlation matrix
-corr = numeric_df.corr()
+# Dimensions of feature set
+print("\nFeature Set Dimensions (Rows, Columns):")
+print(X.shape)  # Output: (1000, 8)
 
-# Plot heatmap
-plt.figure(figsize=(5, 5))
-sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
-plt.title("Correlation Matrix (Numeric Variables)")
+# Label dimensions
+print("\nLabel Dimensions (Rows):")
+print(y.shape)  # Output: (1000,)
+
+# Descriptive statistics
+print("\nDescriptive Statistics for Features:")
+print(X.describe())
+
+print("\nDescriptive Statistics for Label:")
+print(y.describe())
+
+# Visualize distributions
+plt.figure(figsize=(15, 10))
+for i, col in enumerate(X.columns):
+    plt.subplot(3, 3, i+1)
+    sns.histplot(X[col], kde=True)
+    plt.title(col)
+plt.tight_layout()
+plt.show()
+
+plt.figure(figsize=(8, 5))
+sns.histplot(y, kde=True)
+plt.title('Watch Time (Minutes) Distribution')
+plt.show()
+
+# Calculate correlations with label
+print("\nCorrelation with Label (Watch Time):")
+label_correlations = X.corrwith(y)
+print(label_correlations.sort_values(ascending=False))
+
+# Calculate feature correlations with each other
+print("\nFeature Correlation Matrix:")
+feature_correlations = X.corr()
+plt.figure(figsize=(10, 8))
+sns.heatmap(feature_correlations, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Feature Correlation Matrix")
 plt.show()
