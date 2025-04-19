@@ -5,11 +5,13 @@ import matplotlib.pyplot as plt
 
 # Load the data
 df = pd.read_csv("./final proj/twitchdata-update.csv")
+# print("Data loaded successfully!")
 
 # Store column names for use
 features = ['Stream time(minutes)', 'Peak viewers', 'Average viewers', 'Followers', 
             'Followers gained', 'Views gained', 'Partnered', 'Mature']
 label = 'Watch time(Minutes)'
+
 
 # Create feature DataFrame (X) and label Series (y)
 X = df[features]
@@ -32,12 +34,12 @@ print(X.shape)
 print("\nLabel Dimensions (Rows):")
 print(y.shape)
 
-# Descriptive statistics (rounded to 3 decimal places)
+# Descriptive statistics
 print("\nDescriptive Statistics for Features:")
-print(X.describe().round(3))
+print(X.describe())
 
 print("\nDescriptive Statistics for Label:")
-print(pd.DataFrame(y.describe()).transpose().round(3))
+print(y.describe())
 
 # Visualize distributions
 plt.figure(figsize=(15, 10))
@@ -53,15 +55,15 @@ sns.histplot(y, kde=True)
 plt.title('Watch Time Distribution')
 plt.show()
 
-# Calculate correlations with label (rounded to 3 decimal places)
+# Calculate correlations with label
 print("\nCorrelation with Label (Watch Time):")
-label_correlations = X.corrwith(y).round(3)
+label_correlations = X.corrwith(y)
 print(label_correlations.sort_values(ascending=False))
 
-# Calculate feature correlations with each other (rounded to 3 decimal places)
+# Calculate feature correlations with each other
 print("\nFeature Correlation Matrix:")
-feature_correlations = X.corr().round(3)
+feature_correlations = X.corr()
 plt.figure(figsize=(10, 8))
-sns.heatmap(feature_correlations, annot=True, cmap='coolwarm', fmt=".3f")  # Changed to .3f
+sns.heatmap(feature_correlations, annot=True, cmap='coolwarm', fmt=".2f")
 plt.title("Feature Correlation Matrix")
 plt.show()
