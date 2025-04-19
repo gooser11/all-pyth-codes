@@ -1,0 +1,87 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
+
+# Data Loading and Preparation
+df = pd.read_csv("./final proj/twitchdata-update.csv")
+features = ['Watch time(Minutes)', 'Average viewers', 'Partnered']
+X = df[features].copy()
+X['Partnered'] = X['Partnered'].astype(int)
+y = df['Followers gained']
+X = X.dropna()
+y = y[X.index]
+
+# Standardization
+scaler = StandardScaler()
+X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
+
+# Model Training
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predictions
+y_train_pred = model.predict(X_train)
+y_test_pred = model.predict(X_test)
+
+# Performance Metrics
+metrics = {
+    'Train_R2': r2_score(y_train, y_train_pred),
+    'Test_R2': r2_score(y_test, y_test_pred),
+    'Train_RMSE': mean_squared_error(y_train, y_train_pred, squared=False),
+    'Test_RMSE': mean_squared_error(y_test, y_test_pred, squared=False)
+}
+
+# Feature Importance
+importance = pd.DataFrame({
+    'Feature': X.columns,
+    'Coefficient': model.coef_
+}).sort_values('Coefficient', key=abs, ascending=False)
+
+# Visualization
+plt.figure(figsize=(10, 6))
+plt.scatter(X_train['Average viewers'], y_train, color='blue', alpha=0.3, label='Train')
+plt.scatter(X_test['Average viewers'], y_test, color='green', alpha=0.3, label='Test')
+plt.plot(X_test['Average viewers'], y_test_pred, color='red', linewidth=2, label='Model')
+plt.xlabel('Average Viewers (Standardized)')
+plt.ylabel('Followers Gained')
+plt.title('Followers Gained Prediction')
+plt.legend()
+plt.savefig('model_performance.png')
+plt.close()
+
+# Out-of-Range Analysis
+train_min, train_max = X_train['Average viewers'].min(), X_train['Average viewers'].max()
+out_of_range = X_test[(X_test['Average viewers'] < train_min) | (X_test['Average viewers'] > train_max)]
+oor_performance = {
+    'count': len(out_of_range),
+    'r2': r2_score(y_test[out_of_range.index], y_test_pred[out_of_range.index]) if not out_of_range.empty else None
+}
+
+# Output Results
+print("=== Data Dimensions ===")
+print(f"Training set: {X_train.shape}")
+print(f"Testing set: {X_test.shape}\n")
+
+print("=== Model Performance ===")
+print(f"Training R²: {metrics['Train_R2']:.3f}")
+print(f"Testing R²: {metrics['Test_R2']:.3f}")
+print(f"Training RMSE: {metrics['Train_RMSE']:,.0f}")
+print(f"Testing RMSE: {metrics['Test_RMSE']:,.0f}\n")
+
+print("=== Feature Importance ===")
+print(importance.to_string(index=False))
+print(f"\nMost important feature: {importance.iloc[0,0]}\n")
+
+print("=== Out-of-Range Analysis ===")
+if oor_performance['count'] > 0:
+    print(f"{oor_performance['count']} test points outside training range")
+    print(f"Out-of-range R²: {oor_performance['r2']:.3f}")
+else:
+    print("All test points within training range")
